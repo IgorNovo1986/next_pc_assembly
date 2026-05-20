@@ -1,3 +1,6 @@
+'use client'
+
+import { signupAction, SignupState } from '@/app/signup/action'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -8,35 +11,57 @@ import {
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 
+import { useActionState } from 'react'
+import { ErrorMessage } from './error-message'
+
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
+  const [state, formAction] = useActionState<SignupState | null, FormData>(
+    signupAction,
+    null,
+  )
+
   return (
     <Card {...props}>
       <CardHeader>
         <CardTitle>Создать аккаунт</CardTitle>
       </CardHeader>
       <CardContent>
-        <form>
+        <form action={formAction}>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="name">Имя</FieldLabel>
-              <Input id="name" type="text" placeholder="John Doe" required />
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="Тут должно быть ваше имя"
+                required
+              />
             </Field>
             <Field>
               <FieldLabel htmlFor="email">Email</FieldLabel>
               <Input
                 id="email"
+                name="email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder="Введите email -> m@example.com"
                 required
               />
             </Field>
             <Field>
               <FieldLabel htmlFor="password">Пароль</FieldLabel>
-              <Input id="password" type="password" required />
-              <FieldDescription>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Придумайтей пароль"
+                required
+              />
+              {/* <FieldDescription>
                 Пароль должен быть больше 8 символов
-              </FieldDescription>
+              </FieldDescription> */}
             </Field>
+            {state?.error && <ErrorMessage message={state.error} />}
             <FieldGroup>
               <Field>
                 <Button type="submit">Создать аккаунт</Button>
